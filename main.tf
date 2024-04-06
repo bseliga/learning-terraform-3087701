@@ -13,10 +13,10 @@ data "aws_ami" "app_ami" {
 
   owners = ["979382823631"] # Bitnami
 }
+
 data "aws_vpc" "default" {
   default = true
 }
-
 
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -33,18 +33,21 @@ module "blog_vpc" {
   }
 }
 
+module "autoscaling" {
+  source   = "terraform-aws-modules/autoscaling/aws"
+  version  = "7.4.1"
+  # insert the 1 required variable here
+  name     = "blog"
+  min_size = 1
+  max_size = 2
 
+  vpc_zone_idetifier = module.blog_vpc.public_subnets
+  target_group_arns  = module.blog-alb.target_group_arns
+  security_groups    = [module.blog_sg.security_group_id]
 
-resource "aws_instance" "blog" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
-  vpc_security_group_ids = [module.blog_sg.security_group_id]
-  
-  subnet_id = module.blog_vpc.public_subnets[0]
-  
-  tags = {
-    Name = "HelloWorld"
-  }
+
 }
 
 module "blog_alb" {
