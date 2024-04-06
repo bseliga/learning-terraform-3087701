@@ -33,7 +33,7 @@ module "blog_vpc" {
   }
 }
 
-module "autoscaling" {
+module "blogautoscaling" {
   source   = "terraform-aws-modules/autoscaling/aws"
   version  = "7.4.1"
   # insert the 1 required variable here
@@ -41,12 +41,12 @@ module "autoscaling" {
   min_size = 1
   max_size = 2
 
-  vpc_zone_idetifier = module.blog_vpc.public_subnets
-  target_group_arns  = module.blog-alb.target_group_arns
-  security_groups    = [module.blog_sg.security_group_id]
+  vpc_zone_identifier = module.blog_vpc.public_subnets
+  target_group_arns   = module.blog-alb.target_group_arns
+  security_groups     = [module.blog_sg.security_group_id]
 
-  ami           = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
+  image_id            = data.aws_ami.app_ami.id
+  instance_type       = var.instance_type
 
 }
 
