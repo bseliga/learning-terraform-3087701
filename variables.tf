@@ -26,7 +26,7 @@ variable "environment" {
 
   default = {
     name = "dev"
-    cidr = "10.0"
+    network_prefix = "10.0"
   }
 }
 
